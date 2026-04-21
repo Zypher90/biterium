@@ -1,6 +1,7 @@
 use sha2::{Sha256, Digest};
 use serde::{Serialize, Deserialize};
 use std::time::{SystemTime, UNIX_EPOCH, Duration};
+use crate::core::transaction::Transaction;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Block{
@@ -8,7 +9,8 @@ pub struct Block{
     pub prev_hash: String,
     pub timestamp: u128,
     pub nonce: u64,
-    pub hash: String
+    pub hash: String,
+    pub transactions: Vec<Transaction>
 }
 
 impl Block{
@@ -20,7 +22,8 @@ impl Block{
             prev_hash,
             timestamp,
             nonce: 0,
-            hash: String::new()
+            hash: String::new(),
+            transactions: Vec::new()
         };
 
         block.hash = block.calculate_hash();
@@ -28,7 +31,8 @@ impl Block{
     }
 
     pub fn calculate_hash(&self) -> String{
-        let data = format!("{}{}{}{}", self.index, self.prev_hash, self.timestamp, self.nonce);
+        let tx_data = serde_json::to_string(&self.transactions).unwrap();
+        let data = format!("{}{}{}{}{}", self.index, self.prev_hash, self.timestamp, self.nonce, tx_data);
 
         let mut hasher = Sha256::new();
         hasher.update(data);

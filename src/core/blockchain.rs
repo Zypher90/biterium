@@ -1,4 +1,8 @@
+use std::hint::black_box;
+use sha2::digest::typenum::Prod;
+use crate::core::transaction::verify_transaction;
 use super::block::Block;
+use crate::consensus::pow::ProofOfWork;
 pub struct Blockchain {
     pub chain: Vec<Block>
 }
@@ -17,7 +21,15 @@ impl Blockchain {
     pub fn add_block(&mut self) {
         let prev_block = self.chain.last().unwrap();
 
-        let new_block = Block::new(prev_block.index+1, prev_block.hash.clone());
+        let mut new_block = Block::new(
+            prev_block.index+1,
+            prev_block.hash.clone()
+        );
+
+        let pow = ProofOfWork{
+            difficulty: 4
+        };
+        pow.mine(&mut new_block);
 
         self.chain.push(new_block);
     }
@@ -26,6 +38,19 @@ impl Blockchain {
         for i in 1..self.chain.len(){
             let current = &self.chain[i];
             let prev = &self.chain[i-1];
+
+            for tx in &current.transactions {
+                if !verify_transaction(tx) {
+                    return false;
+                }
+            }
+            
+            let pow = ProofOfWork{
+                difficulty: 4
+            };
+            if !pow.validate(&current) {
+                return false;
+            }
 
             if current.hash != current.calculate_hash() {
                 return false;

@@ -1,4 +1,5 @@
 use crate::core::block::Block;
+use crate::mempool::pool::Mempool;
 
 pub struct ProofOfWork {
     pub difficulty: usize

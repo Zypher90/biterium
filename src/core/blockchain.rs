@@ -3,6 +3,8 @@ use sha2::digest::typenum::Prod;
 use crate::core::transaction::verify_transaction;
 use super::block::Block;
 use crate::consensus::pow::ProofOfWork;
+use crate::mempool::pool::Mempool;
+
 pub struct Blockchain {
     pub chain: Vec<Block>
 }
@@ -44,7 +46,7 @@ impl Blockchain {
                     return false;
                 }
             }
-            
+
             let pow = ProofOfWork{
                 difficulty: 4
             };
@@ -61,5 +63,9 @@ impl Blockchain {
             }
         }
         true
+    }
+
+    pub fn mine_block(&mut self, mempool: &Mempool) {
+        todo!()
     }
 }

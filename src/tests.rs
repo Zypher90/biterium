@@ -1,6 +1,8 @@
 use crate::consensus::pow::ProofOfWork;
 use crate::core::block::Block;
-use super::*;
+use crate::core::blockchain::*;
+use crate::core::transaction::*;
+use crate::crypto::wallet::generate_wallet;
 
 #[test]
 fn init_chain() {

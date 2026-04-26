@@ -9,3 +9,4 @@ fn main() {
 #[cfg(test)]
 mod tests;
 mod mempool;
+mod network;
